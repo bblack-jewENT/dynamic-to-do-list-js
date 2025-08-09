@@ -30,26 +30,31 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Create a new list item for the task
+        // Create a new li element and set its textContent to taskText
         const li = document.createElement('li');
         li.textContent = taskText;
 
-        // Create a remove button for the task
+        // Create a new button for removing the task
         const removeBtn = document.createElement('button');
         removeBtn.textContent = 'Remove';
         removeBtn.className = 'remove-btn';
 
-        // Set up the remove button to delete the task when clicked
+        // Assign an onclick event to the remove button to remove the li from taskList
         removeBtn.onclick = function () {
             taskList.removeChild(li);
             // Remove from Local Storage
             let tasks = getStoredTasks();
-            tasks = tasks.filter(t => t !== taskText || taskList.querySelectorAll('li').length === 0); // Remove only one occurrence
-            saveTasks(tasks);
+            // Remove only the first matching occurrence
+            const idx = tasks.indexOf(taskText);
+            if (idx > -1) {
+                tasks.splice(idx, 1);
+                saveTasks(tasks);
+            }
         };
 
-        // Append the remove button to the list item, then add to the list
+        // Append the remove button to the li element
         li.appendChild(removeBtn);
+        // Append the li to taskList
         taskList.appendChild(li);
 
         // Save to Local Storage if needed
@@ -58,6 +63,9 @@ document.addEventListener('DOMContentLoaded', function () {
             tasks.push(taskText);
             saveTasks(tasks);
         }
+
+        // Clear the task input field
+        taskInput.value = '';
 
         // Clear the input field
         taskInput.value = '';
